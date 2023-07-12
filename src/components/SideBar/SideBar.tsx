@@ -2,7 +2,7 @@ import React from 'react';
 import './Sidebar.css';
 import anime from 'animejs/lib/anime.es.js';
 
-const Sidebar: React.FC = () => {
+const Sidebar: React.FC = ({ createNoteBlock }) => {
   const colors = [
     '#d6e6ff',
     '#d7f9f8',
@@ -23,6 +23,10 @@ const Sidebar: React.FC = () => {
     '#bdb2ff',
     '#ffc6ff',
   ]; // les couleurs de vos dots
+  const handleDotClick = (event) => {
+    const color = event.target.style.backgroundColor;
+    createNoteBlock(color);
+  };
 
   const handleClick = () => {
     // animation du bouton +
@@ -71,7 +75,12 @@ const Sidebar: React.FC = () => {
           </button>
           {/* Créez 5 dots */}
           {[...Array(5)].map((_, i) => (
-            <div className="dot" key={i} />
+            <div
+              className="dot"
+              onClick={handleDotClick}
+              key={i}
+              style={{ backgroundColor: colors[i] }}
+            />
           ))}
         </div>
       </div>
