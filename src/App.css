@@ -7,6 +7,8 @@
 
 * {
   font-family: Gilroy;
+  /* box-sizing: border-box;
+  border: 1px solid red; */
 }
 
 .App {
@@ -27,13 +29,18 @@ header {
 }
 h1 {
   width: 80%;
+  margin-top: 20px;
+  height: 52.5px;
+  align-items: center;
+  display: flex;
+  padding-top: 92px;
 }
 .search-bar {
   width: 80%;
   padding: 10px;
-  margin-bottom: 10px;
   border-radius: 4px;
   border: 0px;
+  outline: none;
 }
 
 .note-blocks {
