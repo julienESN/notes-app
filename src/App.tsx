@@ -16,11 +16,18 @@ const App: React.FC = () => {
   }, [noteBlocks]);
 
   const createNoteBlock = (color) => {
-    const newNoteBlock = { id: uuidv4(), color };
+    const newNoteBlock = {
+      id: uuidv4(),
+      color,
+      date: new Date().toLocaleString('en-US', {
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric',
+      }),
+    };
     setNoteBlocks([...noteBlocks, newNoteBlock]);
     setMarginLeft((prevMarginLeft) => prevMarginLeft + 10);
   };
-
   return (
     <div className="App">
       <header>
@@ -35,6 +42,7 @@ const App: React.FC = () => {
             id={noteBlock.id}
             color={noteBlock.color}
             marginLeft={marginLeft}
+            date={noteBlock.date}
           />
         ))}
       </div>

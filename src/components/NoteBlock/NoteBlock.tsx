@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import anime from 'animejs/lib/anime.es.js';
 import './NoteBlock.css';
 
-const NoteBlock = ({ id, color }) => {
+const NoteBlock = ({ id, color, date }) => {
   useEffect(() => {
     anime({
       targets: `#note-block-${id}`,
@@ -19,7 +19,11 @@ const NoteBlock = ({ id, color }) => {
       className="note-block"
       style={{ backgroundColor: color }}
     >
-      {/* Contenu de votre note ici */}
+      {/* Ajout de la date et du bouton d'édition */}
+      <div className="note-block-footer">
+        <div className="note-block-date">{date}</div>
+        <button className="note-block-edit-button">✎</button>
+      </div>
     </div>
   );
 };
