@@ -1,15 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Sidebar from './components/Sidebar/Sidebar';
 import NoteBlock from './components/NoteBlock/NoteBlock';
 import { v4 as uuidv4 } from 'uuid';
 import './App.css';
 
 const App: React.FC = () => {
-  const [noteBlocks, setNoteBlocks] = useState([]);
+  const initialNoteBlocks =
+    JSON.parse(localStorage.getItem('noteBlocks')) || [];
+
+  const [noteBlocks, setNoteBlocks] = useState(initialNoteBlocks);
   const [marginLeft, setMarginLeft] = useState(0);
 
+  useEffect(() => {
+    localStorage.setItem('noteBlocks', JSON.stringify(noteBlocks));
+  }, [noteBlocks]);
+
   const createNoteBlock = (color) => {
-    setNoteBlocks([...noteBlocks, { id: uuidv4(), color }]);
+    const newNoteBlock = { id: uuidv4(), color };
+    setNoteBlocks([...noteBlocks, newNoteBlock]);
     setMarginLeft((prevMarginLeft) => prevMarginLeft + 10);
   };
 

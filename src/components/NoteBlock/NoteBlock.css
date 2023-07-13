@@ -1,8 +1,9 @@
 .note-block {
-  width: 250px;
+  width: 235px;
   height: 250px;
   margin-left: calc(10rem + 10px); /* décaler de 10px plus à chaque ajout */
   margin-top: 20px;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   border-radius: 10px; /* bords arrondis */
+  margin-bottom: 7rem;
 }

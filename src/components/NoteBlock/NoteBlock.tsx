@@ -7,8 +7,9 @@ const NoteBlock = ({ id, color }) => {
     anime({
       targets: `#note-block-${id}`,
       scale: [0, 1],
-      duration: 1000,
-      easing: 'easeInOutQuad',
+      duration: 3000,
+      elasticity: 2000,
+      easing: 'easeOutElastic',
     });
   }, [id]);
 
