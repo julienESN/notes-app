@@ -32,7 +32,7 @@ header {
   margin-left: 5.4rem;
   margin-top: -3.5px;
   /* margin-bottom: 6rem; */
-  height: 252px;
+  height: 300px;
 }
 h1 {
   width: 80%;
@@ -57,4 +57,23 @@ h1 {
   width: 100%;
   display: flex;
   flex-wrap: wrap;
+}
+
+::-webkit-scrollbar {
+  width: 20px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #d6dee1;
+  border-radius: 20px;
+  border: 6px solid transparent;
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #a8bbbf;
 }

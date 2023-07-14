@@ -5,28 +5,42 @@ import { v4 as uuidv4 } from 'uuid';
 import './App.css';
 
 const App: React.FC = () => {
+  const formatNewDate = () => {
+    return new Date().toLocaleString('en-US', {
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric',
+    });
+  };
+
+  const useCreateNoteBlock = (noteBlocks, setNoteBlocks) => {
+    const createNoteBlock = (color) => {
+      const newNoteBlock = {
+        id: uuidv4(),
+        color,
+        content: '',
+        date: formatNewDate(),
+      };
+      setNoteBlocks([...noteBlocks, newNoteBlock]);
+    };
+    return createNoteBlock;
+  };
   const initialNoteBlocks =
     JSON.parse(localStorage.getItem('noteBlocks')) || [];
-
   const [noteBlocks, setNoteBlocks] = useState(initialNoteBlocks);
+  const createNoteBlock = useCreateNoteBlock(noteBlocks, setNoteBlocks);
   const [marginLeft, setMarginLeft] = useState(0);
 
   useEffect(() => {
     localStorage.setItem('noteBlocks', JSON.stringify(noteBlocks));
   }, [noteBlocks]);
 
-  const createNoteBlock = (color) => {
-    const newNoteBlock = {
-      id: uuidv4(),
-      color,
-      date: new Date().toLocaleString('en-US', {
-        month: 'long',
-        day: 'numeric',
-        year: 'numeric',
-      }),
-    };
-    setNoteBlocks([...noteBlocks, newNoteBlock]);
-    setMarginLeft((prevMarginLeft) => prevMarginLeft + 10);
+  const handleEdit = (id, newContent) => {
+    setNoteBlocks(
+      noteBlocks.map((noteBlock) =>
+        noteBlock.id === id ? { ...noteBlock, content: newContent } : noteBlock
+      )
+    );
   };
   return (
     <div className="App">
@@ -43,6 +57,8 @@ const App: React.FC = () => {
             color={noteBlock.color}
             marginLeft={marginLeft}
             date={noteBlock.date}
+            content={noteBlock.content} // Nouveau
+            onEdit={handleEdit} // Nouveau
           />
         ))}
       </div>

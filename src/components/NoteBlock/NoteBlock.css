@@ -35,3 +35,9 @@
   cursor: pointer;
   font-size: 14px;
 }
+
+p {
+  text-align: justify;
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
