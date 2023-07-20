@@ -79,7 +79,7 @@ const Sidebar: React.FC = ({ createNoteBlock }) => {
               className="dot"
               onClick={handleDotClick}
               key={i}
-              style={{ backgroundColor: colors[i] }}
+              style={{ backgroundColor: colors[i], cursor: 'pointer' }}
             />
           ))}
         </div>

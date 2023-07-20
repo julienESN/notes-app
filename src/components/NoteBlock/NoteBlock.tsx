@@ -1,19 +1,30 @@
-import React, { useEffect } from 'react';
-import { useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react'; // Ajoutez useRef
 import anime from 'animejs/lib/anime.es.js';
 import './NoteBlock.css';
 
-const NoteBlock = ({ id, color, date, content, onEdit }) => {
-  const [isEditing, setIsEditing] = useState(false); // Nouveau
+const NoteBlock = ({ id, color, date, content, onEdit, onDelete }) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const contentRef = useRef(null); // Nouveau
+
+  const handleDeleteButtonClick = () => {
+    setIsDeleting(true);
+  };
 
   const handleEditButtonClick = () => {
-    // Nouveau
-    setIsEditing(!isEditing);
+    setIsEditing(true);
   };
+
   const handleBlur = (event) => {
-    // Nouveau
     onEdit(id, event.target.textContent);
+    setIsEditing(false); // Ajouté pour arrêter l'édition lorsqu'on clique en dehors
   };
+
+  useEffect(() => {
+    if (isEditing && contentRef.current) {
+      contentRef.current.focus(); // Auto-focus lorsque isEditing est true
+    }
+  }, [isEditing]);
 
   useEffect(() => {
     anime({
@@ -25,6 +36,22 @@ const NoteBlock = ({ id, color, date, content, onEdit }) => {
     });
   }, [id]);
 
+  // Nouveau
+  useEffect(() => {
+    if (isDeleting) {
+      anime({
+        targets: `#note-block-${id}`,
+        opacity: [1, 0],
+        scale: [1, 0],
+        duration: 2000,
+        easing: 'easeInOutExpo',
+        complete: function (anim) {
+          onDelete(id);
+        },
+      });
+    }
+  }, [isDeleting, id, onDelete]);
+
   return (
     <div
       id={`note-block-${id}`}
@@ -32,8 +59,10 @@ const NoteBlock = ({ id, color, date, content, onEdit }) => {
       style={{ backgroundColor: color }}
     >
       <p
-        contentEditable={isEditing} // L'attribut contentEditable est défini par le state isEditing
-        onBlur={handleBlur} // Quand on arrête d'éditer, met à jour le contenu de la note
+        ref={contentRef} // Ajoutez la ref ici
+        contentEditable={isEditing}
+        onBlur={handleBlur}
+        className={isEditing ? 'editable' : ''} // Quand on arrête d'éditer, met à jour le contenu de la note
       >
         {content}
       </p>
@@ -44,6 +73,12 @@ const NoteBlock = ({ id, color, date, content, onEdit }) => {
           onClick={handleEditButtonClick}
         >
           ✎
+        </button>
+        <button
+          className="note-block-delete-button"
+          onClick={handleDeleteButtonClick}
+        >
+          🗑️
         </button>
       </div>
     </div>

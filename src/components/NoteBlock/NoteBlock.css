@@ -41,3 +41,27 @@ p {
   margin-left: 1rem;
   margin-right: 1rem;
 }
+.note-block p {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  height: 80%;
+  margin: 10px;
+  overflow: auto;
+}
+
+.note-block-delete-button {
+  background-color: black;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.editable {
+  border: 1px solid #ccc;
+  background-color: #fafafa;
+  cursor: text;
+}

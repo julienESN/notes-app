@@ -34,7 +34,11 @@ const App: React.FC = () => {
   useEffect(() => {
     localStorage.setItem('noteBlocks', JSON.stringify(noteBlocks));
   }, [noteBlocks]);
-
+  const handleDeleteNote = (idToDelete) => {
+    setNoteBlocks(
+      noteBlocks.filter((noteBlock) => noteBlock.id !== idToDelete)
+    );
+  };
   const handleEdit = (id, newContent) => {
     setNoteBlocks(
       noteBlocks.map((noteBlock) =>
@@ -49,19 +53,20 @@ const App: React.FC = () => {
         <h1>Notes</h1>
       </header>
       <Sidebar createNoteBlock={createNoteBlock} />
-      <div className="note-blocks">
-        {noteBlocks.map((noteBlock) => (
-          <NoteBlock
-            key={noteBlock.id}
-            id={noteBlock.id}
-            color={noteBlock.color}
-            marginLeft={marginLeft}
-            date={noteBlock.date}
-            content={noteBlock.content} // Nouveau
-            onEdit={handleEdit} // Nouveau
-          />
-        ))}
-      </div>
+        <div className="note-blocks">
+          {noteBlocks.map((noteBlock) => (
+            <NoteBlock
+              key={noteBlock.id}
+              id={noteBlock.id}
+              color={noteBlock.color}
+              marginLeft={marginLeft}
+              date={noteBlock.date}
+              content={noteBlock.content} // Nouveau
+              onEdit={handleEdit} // Nouveau
+              onDelete={handleDeleteNote}
+            />
+          ))}
+        </div>
     </div>
   );
 };
