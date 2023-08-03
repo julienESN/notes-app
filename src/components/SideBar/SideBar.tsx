@@ -1,8 +1,12 @@
-import React from 'react';
-import './Sidebar.css';
+import React, { useRef, useEffect } from 'react';
+import './SideBar.css';
 import anime from 'animejs/lib/anime.es.js';
 
-const Sidebar: React.FC = ({ createNoteBlock }) => {
+interface SidebarProps {
+  createNoteBlock: (color: string) => void;
+}
+
+const Sidebar: React.FC<SidebarProps> = ({ createNoteBlock }) => {
   const colors = [
     '#d6e6ff',
     '#d7f9f8',
@@ -23,8 +27,11 @@ const Sidebar: React.FC = ({ createNoteBlock }) => {
     '#bdb2ff',
     '#ffc6ff',
   ]; // les couleurs de vos dots
-  const handleDotClick = (event) => {
-    const color = event.target.style.backgroundColor;
+
+  const dotRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  const handleDotClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    const color = (event.target as HTMLDivElement).style.backgroundColor;
     createNoteBlock(color);
   };
 
@@ -42,13 +49,13 @@ const Sidebar: React.FC = ({ createNoteBlock }) => {
     const shuffledColors = [...colors].sort(() => Math.random() - 0.5);
 
     // animation des points
-    const dots = document.querySelectorAll('.dot');
-    dots.forEach((dot, i) => {
+    dotRefs.current.forEach((dot, i) => {
+      if (!dot) return;
+
       // assigne une couleur unique à chaque dot
       dot.style.backgroundColor = shuffledColors[i];
 
       // rendre le point visible
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       dot.style.visibility = 'visible';
 
       // animation du point
@@ -64,6 +71,10 @@ const Sidebar: React.FC = ({ createNoteBlock }) => {
     });
   };
 
+  useEffect(() => {
+    dotRefs.current = dotRefs.current.slice(0, 5);
+  }, []);
+
   return (
     <div className="sidebar">
       <div className="sidebar-header">
@@ -76,6 +87,7 @@ const Sidebar: React.FC = ({ createNoteBlock }) => {
           {/* Créez 5 dots */}
           {[...Array(5)].map((_, i) => (
             <div
+              ref={(el) => (dotRefs.current[i] = el)}
               className="dot"
               onClick={handleDotClick}
               key={i}
