@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import React, { useRef, useEffect } from 'react';
 import './SideBar.css';
 import anime from 'animejs/lib/anime.es.js';
@@ -27,14 +28,15 @@ const Sidebar: React.FC<SidebarProps> = ({ createNoteBlock }) => {
     '#bdb2ff',
     '#ffc6ff',
   ]; // les couleurs de vos dots
-
+  
+  // Utilisation de useRef pour accéder à chaque dot dans le DOM
   const dotRefs = useRef<(HTMLDivElement | null)[]>([]);
-
+  // Gestionnaire de clic pour les dots, utilisé pour créer une note avec la couleur du dot cliqué
   const handleDotClick = (event: React.MouseEvent<HTMLDivElement>) => {
     const color = (event.target as HTMLDivElement).style.backgroundColor;
     createNoteBlock(color);
   };
-
+  // Gestionnaire de clic pour le bouton d'ajout, utilisé pour animer le bouton et les dots
   const handleClick = () => {
     // animation du bouton +
     anime({

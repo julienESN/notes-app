@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react'; // Ajoutez useRef
+import { useEffect, useState, useRef } from 'react';
 import anime from 'animejs/lib/anime.es.js';
 import './NoteBlock.css';
 
@@ -21,42 +21,30 @@ const NoteBlock: React.FC<NoteBlockProps> = ({
   onDelete,
   isDeleting,
 }) => {
+  // État local pour suivre si la note est en cours d'édition
   const [isEditing, setIsEditing] = useState(false);
+
+  // Référence pour accéder au contenu de la note dans le DOM
   const contentRef = useRef<HTMLParagraphElement>(null);
 
-  const handleDeleteButtonClick = () => {
-    onDelete(id);
-  };
-
-  const handleEditButtonClick = () => {
-    setIsEditing(true);
-  };
-
-  const handleBlur = (event: React.FocusEvent<HTMLParagraphElement>) => {
-    onEdit(id, event.target.textContent || '');
-    setIsEditing(false); // Ajouté pour arrêter l'édition lorsqu'on clique en dehors
+  // Fonction générique pour gérer les animations
+  const animate = (animationProps: anime.AnimeParams) => {
+    anime(animationProps);
   };
 
   useEffect(() => {
-    if (isEditing && contentRef.current) {
-      contentRef.current.focus(); // Auto-focus lorsque isEditing est true
-    }
-  }, [isEditing]);
-
-  useEffect(() => {
-    anime({
+    // Animation d'ouverture lors de l'initialisation de la note
+    animate({
       targets: `#note-block-${id}`,
       scale: [0, 1],
       duration: 500,
       elasticity: 2000,
       easing: 'easeOutElastic',
     });
-  }, [id]);
 
-  useEffect(() => {
+    // Animation de suppression si isDeleting est défini
     if (isDeleting) {
-      // Utilisez la prop ici
-      anime({
+      animate({
         targets: `#note-block-${id}`,
         opacity: [1, 0],
         scale: [1, 0],
@@ -64,7 +52,14 @@ const NoteBlock: React.FC<NoteBlockProps> = ({
         easing: 'easeInOutExpo',
       });
     }
-  }, [isDeleting, id, onDelete]);
+  }, [id, isDeleting]);
+
+  useEffect(() => {
+    // Auto-focus sur le contenu lors de l'édition
+    if (isEditing && contentRef.current) {
+      contentRef.current.focus();
+    }
+  }, [isEditing]);
 
   return (
     <div
@@ -73,10 +68,13 @@ const NoteBlock: React.FC<NoteBlockProps> = ({
       style={{ backgroundColor: color }}
     >
       <p
-        ref={contentRef} // Ajoutez la ref ici
+        ref={contentRef}
         contentEditable={isEditing}
-        onBlur={handleBlur}
-        className={isEditing ? 'editable' : ''} // Quand on arrête d'éditer, met à jour le contenu de la note
+        onBlur={(event) => {
+          onEdit(id, event.target.textContent || '');
+          setIsEditing(false);
+        }}
+        className={isEditing ? 'editable' : ''}
       >
         {content}
       </p>
@@ -84,14 +82,14 @@ const NoteBlock: React.FC<NoteBlockProps> = ({
         <div className="note-block-date">{date}</div>
         <button
           className="note-block-edit-button"
-          onClick={handleEditButtonClick}
+          onClick={() => setIsEditing(true)}
         >
           ✎
         </button>
         <button
           className="note-block-delete-button"
-          onClick={handleDeleteButtonClick}
-          disabled={isDeleting} // Utilisez isDeleting ici au lieu de props.isDeleting
+          onClick={() => onDelete(id)}
+          disabled={isDeleting}
         >
           🗑️
         </button>

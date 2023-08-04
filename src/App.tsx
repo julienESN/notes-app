@@ -1,8 +1,7 @@
-import React, { useState, useEffect, Dispatch, SetStateAction } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Sidebar from './components/SideBar/SideBar';
 import anime from 'animejs/lib/anime.es.js';
-
-import NoteBlock from './components/NoteBlock/NoteBlock'; // Assurez-vous que NoteBlockProps est exporté depuis le fichier NoteBlock
+import NoteBlock from './components/NoteBlock/NoteBlock';
 import { v4 as uuidv4 } from 'uuid';
 import './App.css';
 
@@ -22,48 +21,53 @@ const App: React.FC = () => {
     });
   };
 
-  const useCreateNoteBlock = (
-    noteBlocks: Note[],
-    setNoteBlocks: Dispatch<SetStateAction<Note[]>>
-  ) => {
-    const createNoteBlock = (color: string) => {
+  const initialNoteBlocks = JSON.parse(
+    localStorage.getItem('noteBlocks') || '[]'
+  );
+  const [noteBlocks, setNoteBlocks] = useState<Note[]>(initialNoteBlocks);
+  const [deletingNotes, setDeletingNotes] = useState<string[]>([]);
+
+  // Hook personnalisé pour créer un bloc-notes
+  const createNoteBlock = useCallback(
+    (color: string) => {
       const newNoteBlock = {
         id: uuidv4(),
         color,
         content: '',
         date: formatNewDate(),
       };
-      setNoteBlocks([newNoteBlock, ...noteBlocks]); // place newNoteBlock au début du tableau
-    };
-    return createNoteBlock;
-  };
-  const initialNoteBlocks =
-    JSON.parse(localStorage.getItem('noteBlocks')!) || [];
-  const [noteBlocks, setNoteBlocks] = useState<Note[]>(initialNoteBlocks);
-  const createNoteBlock = useCreateNoteBlock(noteBlocks, setNoteBlocks);
+      setNoteBlocks([newNoteBlock, ...noteBlocks]);
+    },
+    [noteBlocks]
+  );
 
+  // Effet pour stocker les blocs-notes dans le localStorage
   useEffect(() => {
     localStorage.setItem('noteBlocks', JSON.stringify(noteBlocks));
   }, [noteBlocks]);
 
-  const [deletingNotes, setDeletingNotes] = useState<string[]>([]);
+  // Gestionnaire de suppression de note
   const handleDeleteNote = (idToDelete: string) => {
     setDeletingNotes([...deletingNotes, idToDelete]);
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    anime({
+    void anime({
       targets: `#note-block-${idToDelete}`,
       opacity: [1, 0],
       scale: [1, 0],
       duration: 500,
       easing: 'easeInOutExpo',
-    }).finished.then(() => {
-      setNoteBlocks(
-        noteBlocks.filter((noteBlock) => noteBlock.id !== idToDelete)
-      );
-      setDeletingNotes(deletingNotes.filter((id) => id !== idToDelete));
-    });
+    })
+      .finished.then(() => {
+        setNoteBlocks(
+          noteBlocks.filter((noteBlock) => noteBlock.id !== idToDelete)
+        );
+        setDeletingNotes(deletingNotes.filter((id) => id !== idToDelete));
+      })
+      .catch((error) => {
+        console.error('An error occurred during animation: ', error);
+      });
   };
 
+  // Gestionnaire de modification de note
   const handleEdit = (id: string, newContent: string) => {
     setNoteBlocks(
       noteBlocks.map((noteBlock) =>
@@ -89,7 +93,7 @@ const App: React.FC = () => {
             content={noteBlock.content}
             onEdit={handleEdit}
             onDelete={handleDeleteNote}
-            isDeleting={deletingNotes.includes(noteBlock.id)} //
+            isDeleting={deletingNotes.includes(noteBlock.id)}
           />
         ))}
       </div>
